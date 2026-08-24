@@ -1,30 +1,67 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, FlatList, ScrollView } from "react-native";
+import {
+    StyleSheet,
+    View,
+    FlatList,
+    ScrollView,
+} from "react-native";
+
 import CardLivro from "../components/CardLivro";
-import { buscarLivros } from "../services/livros/buscarLivros";
 import Header from "../components/Header";
 import Pesquisa from "../components/Pesquisa";
+import Categoria from "../components/Categoria";
+
+import { buscarLivros } from "../services/livros/buscarLivros";
+import { listarCategorias } from "../services/categorias/listarCategorias";
 
 export default function Home() {
     const [livros, setLivros] = useState([]);
+    const [categorias, setCategorias] = useState([]);
+    const [filtro, setFiltro] = useState();
 
     useEffect(() => {
-        buscarLivros(setLivros);
+        listarCategorias(setCategorias);
     }, []);
 
+    useEffect(() => {
+        buscarLivros(setLivros, filtro);
+    }, [filtro]);
+
     return (
-        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <View style={styles.containerPrincipal}>
             <Header />
+
             <View style={styles.container}>
                 <Pesquisa />
+
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.containerCategorias}
+                    contentContainerStyle={styles.categoriasContent}
+                >
+                    {categorias.map((categoria, index) => (
+                        <Categoria
+                            key={index}
+                            index={index}
+                            categoria={categoria}
+                            filtro={filtro}
+                            setFiltro={setFiltro}
+                        />
+                    ))}
+                </ScrollView>
+
                 <FlatList
-                    style={{ marginTop: 20 }}
+                    style={styles.lista}
                     data={livros}
                     keyExtractor={(item) => String(item.id)}
                     numColumns={2}
-                    renderItem={({ item }) => <CardLivro livro={item} />}
+                    renderItem={({ item }) => (
+                        <CardLivro livro={item} />
+                    )}
                     contentContainerStyle={styles.listContent}
                     columnWrapperStyle={styles.columnWrapper}
+                    showsVerticalScrollIndicator={false}
                 />
             </View>
         </View>
@@ -32,24 +69,37 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+    containerPrincipal: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+
     container: {
-        maxHeight: "90%",
+        flex: 1,
         marginHorizontal: 20,
-        marginBottom: 40
+        marginBottom: 40,
     },
-    headerTitle: {
-        fontSize: 22,
-        fontWeight: "900",
-        color: "#0F172A",
-        textAlign: "center",
-        marginVertical: 16,
-        letterSpacing: 1,
+
+    containerCategorias: {
+        flexGrow: 0,
+        flexShrink: 0,
     },
+
+    categoriasContent: {
+        paddingVertical: 5,
+    },
+
+    lista: {
+        flex: 1,
+        marginTop: 20,
+    },
+
     listContent: {
         paddingHorizontal: 8,
         paddingBottom: 20,
     },
+
     columnWrapper: {
         justifyContent: "space-between",
-    }
+    },
 });

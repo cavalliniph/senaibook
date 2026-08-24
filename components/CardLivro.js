@@ -1,6 +1,9 @@
+import { useNavigation } from "@react-navigation/native";
 import { Image, Text, View, Pressable, StyleSheet } from "react-native";
 
 export default function CardLivro({ livro, onPress }) {
+    const navigate = useNavigation().navigate;
+
     return (
         <View style={styles.cardContainer}>
             {/* Imagem centralizada na parte superior */}
@@ -31,7 +34,9 @@ export default function CardLivro({ livro, onPress }) {
                     styles.botaoDetalhes,
                     pressed && styles.botaoDetalhesPressionado
                 ]}
-                onPress={onPress}
+                onPress={() => {
+                    navigate('DetalheLivro', { id: livro.id });
+                }}
             >
                 <Text style={styles.textoBotao}>Ver detalhes</Text>
             </Pressable>

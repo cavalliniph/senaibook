@@ -1,5 +1,6 @@
-export async function buscarLivros(setLivros) {
-    const url = "https://apps-api-livros.ucxocw.easypanel.host/livros";
+export async function buscarLivros(setLivros, filtro) {
+    const query = filtro ? `?categoria=${filtro}` : "";
+    const url = `https://apps-api-livros.ucxocw.easypanel.host/livros${query}`;
     const res = await fetch(url, {
         method: "GET",
         headers: {
