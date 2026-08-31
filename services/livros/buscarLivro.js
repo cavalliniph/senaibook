@@ -1,4 +1,8 @@
-const token = process.env.EXPO_PUBLIC_TOKEN;
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// const token = process.env.EXPO_PUBLIC_TOKEN;
+
+const token = await AsyncStorage.getItem("token");
 
 export async function buscarLivro(setLivro, id) {
     const url = `https://apps-api-livros.ucxocw.easypanel.host/livros/${id}`;
