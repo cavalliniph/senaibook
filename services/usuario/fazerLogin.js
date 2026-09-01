@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { salvarToken, salvarUsuario } from "./usuarioStorage";
 
 export async function fazerLogin(email, senha) {
     const res = await fetch("https://apps-api-livros.ucxocw.easypanel.host/auth/login", {
@@ -11,13 +11,13 @@ export async function fazerLogin(email, senha) {
     });
 
     const data = await res.json();
+    
+    if (!data.token || !data.token.length) {
+           throw new Error("Email ou senha informados estão incorretos.");
+    }
 
-    if (!res.ok) throw Error("erro " + data);
-
-    await AsyncStorage.setItem("usuario", JSON.stringify({
-        id: data.usuario.id,
-    }));
-    await AsyncStorage.setItem("token", data.token);
+    await salvarUsuario(data.usuario.id, data.usuario.nome, data.usuario.email);
+    await salvarToken(data.token);
 
     return data;
 }

@@ -148,11 +148,10 @@ export default function Cadastro() {
 
                         <View style={styles.cadastro}>
                             <Text style={styles.cadastroTexto}>Já tem uma conta? </Text>
-                            <Button
-                                title={"Login"}
-                                onPress={() => navigation.navigate("Login")}
-                                style={styles.cadastroLink}
-                            />
+                            <Pressable onPress={() => navigation.navigate("Login")}>
+                                <Text style={styles.cadastroLink}>Login</Text>
+                            </Pressable>
+                            
                         </View>
                     </View>
                 </ScrollView>

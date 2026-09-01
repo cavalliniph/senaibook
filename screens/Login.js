@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -14,16 +14,31 @@ import {
 } from "react-native";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-
 import { fazerLogin } from "../services/usuario/fazerLogin";
+import { getToken } from "../services/usuario/usuarioStorage";
+import { getBiometria } from "../services/usuario/getBiometria";
 
-export default function Login() {
-    const navigation = useNavigation();
+export default function Login({ navigation }) {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [senhaVisivel, setSenhaVisivel] = useState(false);
     const [carregando, setCarregando] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", async () => {
+            try {
+                const token = await getToken();
+
+                if (token && await getBiometria()) {
+                    navigation.navigate("Home");
+                }
+            } catch (error) {
+                console.warn("Não foi possível usar a biometria:", error);
+            }
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     async function onFormSubmit() {
         if (!email.trim() || !senha) {
@@ -34,7 +49,7 @@ export default function Login() {
         try {
             setCarregando(true);
             await fazerLogin(email.trim(), senha);
-            navigation.replace("Home");
+            navigation.navigate("Home");
         } catch(err) {
             console.log(err);
             Alert.alert("Não foi possível entrar", "Confira seus dados e tente novamente.");
@@ -134,7 +149,9 @@ export default function Login() {
 
                         <View style={styles.cadastro}>
                             <Text style={styles.cadastroTexto}>Não tem conta? </Text>
-                            <Text style={styles.cadastroLink}>Criar conta</Text>
+                            <Pressable onPress={() => navigation.navigate("Cadastro")}>
+                                <Text style={styles.cadastroLink}>Criar conta</Text>
+                            </Pressable>
                         </View>
                     </View>
                 </ScrollView>

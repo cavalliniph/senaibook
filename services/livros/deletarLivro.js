@@ -1,10 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { buscarLivros } from "./buscarLivros";
 
-export async function buscarLivro(setLivro, id) {
+export async function deletarLivro(id) {
     const token = await AsyncStorage.getItem("token");
     const url = `https://apps-api-livros.ucxocw.easypanel.host/livros/${id}`;
     const res = await fetch(url, {
-        method: "GET",
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
@@ -12,5 +13,8 @@ export async function buscarLivro(setLivro, id) {
     });
 
     const data = await res.json();
-    setLivro(data.livro);
+    
+    if (!res.ok) {
+        throw new Error(data?.mensagem);
+    }
 }

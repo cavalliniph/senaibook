@@ -6,12 +6,13 @@ import {
     Text,
     Image,
     Animated,
+    Pressable,
 } from "react-native";
 
 import Header from "../components/Header";
 
 import { buscarLivro } from "../services/livros/buscarLivro";
-import { useNavigation } from "@react-navigation/native";
+import { deletarLivro } from "../services/livros/deletarLivro";
 
 function useFadePulse() {
     const [opacity] = useState(new Animated.Value(0.3));
@@ -62,9 +63,9 @@ function SkeletonDetalheLivro() {
     );
 }
 
-export default function DetalheLivro({ route }) {
+export default function DetalheLivro({ route, navigation }) {
     const { id } = route.params;
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
 
     const [livro, setLivro] = useState(null);
 
@@ -110,6 +111,9 @@ export default function DetalheLivro({ route }) {
 
                         <Text style={styles.descricaoLabel}>Sinopse</Text>
                         <Text style={styles.descricao}>{livro.descricao}</Text>
+                        <Pressable onPress={() => deletarLivro(livro.id)}>
+                            <Text>Delete</Text>
+                        </Pressable>
                     </View>
                 )}
             </ScrollView>
